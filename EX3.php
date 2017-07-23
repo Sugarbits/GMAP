@@ -63,11 +63,10 @@
 		}
 		$(this).addClass('chose');
 		setTimeout(function(){ runEffect(); }, 800);
-		toggle = false;
 		btn_value = data_val;
 		initail();
 		renew();
-		console.log(data_val);
+		//console.log(data_val);
 	});
     </script>
     <script>
@@ -79,6 +78,7 @@
 		}
 	}
 	function renew(){//ajax抓值
+	console.log('renew');
 		$.getJSON( "crawler/cr_motc_bus.php", function( data ) {
 		$( "#foobar" ).html('');
 		var items = [];
@@ -148,7 +148,6 @@
 			}
 			markers = [];
 			marker_old = null;
-			info_old.close();
 		}
 		function add_info(a_map,a_latlng,a_content){
 			var infowindow = new google.maps.InfoWindow({                
@@ -228,7 +227,7 @@
 		centerControlDiv.index = 1;
         var centerControl = new CenterControl(centerControlDiv, map);
 
-	  renew();
+		renew();
       }
 	  function compare_latlng(omk,lat,lng){
 		var olat = omk.getPosition().lat();
