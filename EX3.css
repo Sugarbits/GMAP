@@ -1,0 +1,34 @@
+	/*	本人定義的	 */
+		body, html {width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden;}
+	#map{
+		z-index: 1;
+		top:0%;
+		position:absolute;
+		width:100%;
+		height:100vh;
+		background-color:black;
+	}
+	#foobar{
+		z-index: 2;
+		top:0%;
+		position:absolute;
+		width:100%;
+		height:15vh;
+		background-color:pink;
+	}
+	.btn{
+		font-size:12px;
+		font-weight: bold;
+		-webkit-writing-mode: vertical-lr;
+		writing-mode: vertical-lr ;
+		margin:1%;
+		height:10vh;
+		width:6%;
+		background-color:red;
+		float:left;
+	}
+
+	.chose{
+		background-color:blue;
+		color:white;
+	}

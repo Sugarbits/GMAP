@@ -7,6 +7,7 @@
 	$ch = curl_init();
 	//set curl options 設定你要傳送參數的目的地檔案
 	curl_setopt($ch, CURLOPT_URL, "http://ptx.transportdata.tw/MOTC/v2/Bus/RealTimeByFrequency/City/HualienCounty?$top=30&$format=JSON");
+	//curl_setopt($ch, CURLOPT_URL, "http://ptx.transportdata.tw/MOTC/v2/Bus/RealTimeByFrequency/City/Taipei?$top=30&$format=json");
 	curl_setopt($ch, CURLOPT_HEADER, false);   
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
 	//execute curl
