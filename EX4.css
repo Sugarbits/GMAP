@@ -16,6 +16,36 @@
 		height:15vh;
 		background-color:pink;
 	}
+	#foobar_left{
+		z-index: 2;
+		margin: 0;
+		padding: 0;
+		width:90%;
+		height:15vh;
+		//background-color:green;
+		float:left;
+	}
+	#foobar_right{
+		z-index: 2;
+		margin: 0;
+		padding: 0;
+		width:10%;
+		height:15vh;
+		//background-color:blue;
+		float:left;
+	}
+	.side{
+		font-size:15px;
+		font-weight: bold;
+		-webkit-writing-mode: vertical-lr;
+		writing-mode: vertical-lr ;
+		margin-left: 1%;
+		height:15vh;
+		width:45%;
+		background-color:#4286f4;
+		float:right;
+
+	}
 	.btn{
 		font-size:12px;
 		font-weight: bold;
