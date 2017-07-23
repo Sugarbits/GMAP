@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
-	<link type="text/css" rel="Stylesheet" href="EX3.css" />
+	<link type="text/css" rel="Stylesheet" href="EX4.css" />
 	
 	<script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.2.1.min.js"></script>
 
@@ -28,18 +28,6 @@
    <!--地圖主體-->
    <div id="map"></div>
    <!--附屬資訊_介紹欄位-->
-   <div id="footer0"></div>
-   <div id="footer1" class="bigger">
-   <div class='box bigger'>車號</div>
-   <div class='box bigger'>車速</div>
-   <div class='box bigger'>經緯度</div>
-   </div>
-   <!--附屬資訊_內容-->
-   <div id="footer2"  class="bigger">
-   <div id='car_name' class='box'></div>
-   <div id='speed' class='box'></div>
-   <div id='latlng' class='box'></div>
-   </div>
     <script>//html js 互動 dom 版面
 	
 	  function runEffect() {
@@ -106,31 +94,31 @@
 			
 			//給附屬資訊_內容
 			//$('#speed').html(data[key]['UpdateTime']);
-			$('#speed').html(data[key]['Speed']+"km");
+			$('#speed').html(data[key]['Speed']+"KM/S");
 			$('#car_name').html(car_no);
-			$('#latlng').html( data[key]['BusPosition']['PositionLat'].toFixed(2)+'，'+data[key]['BusPosition']['PositionLon'].toFixed(2));
+			$('#latlng').html( data[key]['BusPosition']['PositionLat']+'<br>'+data[key]['BusPosition']['PositionLon']);
 			
 			if(marker_old == null){//first time add marker
 				console.log('第一筆，新增資料!');
 				var marker = add_marker(map,tmpLatLng,tmptitle,tmpcontent);
-				//var info = add_info(map,tmpLatLng,tmpcontent);
+				var info = add_info(map,tmpLatLng,tmpcontent);
 				/*marker.infowindow = new google.maps.InfoWindow(
 				{
 					content: tmpcontent
 				});*/
 				markers.push(marker);//write into history
 				marker_old = marker;//temp save for last one
-				//info_old = info;
+				info_old = info;
 				}else{
 					if(compare_latlng(marker_old,data[key]['BusPosition']['PositionLat'],data[key]['BusPosition']['PositionLon'])){//last one position the same,we not need renew
-						//var info = add_info(map,tmpLatLng,tmpcontent);
+						var info = add_info(map,tmpLatLng,tmpcontent);
 						var marker = add_marker(map,tmpLatLng,tmptitle,tmpcontent);
 						console.log('定位不相同，新增資料!');
 						marker_old.setIcon(past_icon_url);//turn to past sign
 						marker_old.setOptions({'opacity': 1});//opacity
 						marker_old = marker;
-						//info_old.close();
-						//info_old = info;						
+						info_old.close();
+						info_old = info;						
 						//marker_old.setMap(null);
 					}else{
 						console.log('定位相同，無新資料');
