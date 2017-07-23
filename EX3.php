@@ -30,15 +30,15 @@
    <!--附屬資訊_介紹欄位-->
    <div id="footer0"></div>
    <div id="footer1" class="bigger">
-   <div class='box bigger'>車號</div>
-   <div class='box bigger'>車速</div>
-   <div class='box bigger'>經緯度</div>
+   <div class='box'>車號</div>
+   <div class='box'>車速</div>
+   <div class='box'>經緯度</div>
    </div>
    <!--附屬資訊_內容-->
-   <div id="footer2"  class="bigger">
-   <div id='car_name' class='box'></div>
-   <div id='speed' class='box'></div>
-   <div id='latlng' class='box'></div>
+   <div id="footer2">
+   <div id='car_name' class='box bigger'></div>
+   <div id='speed' class='box bigger'></div>
+   <div id='latlng' class='box smaller'></div>
    </div>
     <script>//html js 互動 dom 版面
 	

@@ -5,7 +5,7 @@
 		top:0%;
 		position:absolute;
 		width:100%;
-		height:88vh;
+		height:80vh;
 		background-color:black;
 	}
 	#foobar{
@@ -18,7 +18,7 @@
 	}
 	#footer0{
 		width:100%;
-		height:88vh;
+		height:80vh;
 		background-color:pink;
 	}#footer1{
 		width:100%;
@@ -52,6 +52,10 @@
 	}
 	.bigger{
 		font-size:25px;
+	}
+	.smaller{
+		font-size:16px;
+		vertical-align: text-top;
 	}
 	.chose{
 		background-color:blue;
