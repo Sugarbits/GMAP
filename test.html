@@ -1,0 +1,55 @@
+<title>Google Maps JavaScript API v3 Example: Overlay Simple</title>
+</head>
+<body onload="initialize()">
+    <div id="map_canvas"></div>
+</body>
+<script></script>
+<script  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA0bdKmBEMTJH7qsTjjG_1rfteVrNXzxQk&callback=initMap">
+var overlay;
+
+function initialize() {
+    var myLatLng = new google.maps.LatLng(52.323907, -150.109291);
+    var mapOptions = {
+        zoom: 8,
+        center: myLatLng,
+        mapTypeId: google.maps.MapTypeId.SATELLITE
+    };
+
+    var gmap = new google.maps.Map(document.getElementById('map_canvas'), mapOptions);
+
+    function HTMLMarker(lat, lng) {
+        this.lat = lat;
+        this.lng = lng;
+        this.pos = new google.maps.LatLng(lat, lng);
+    }
+
+    HTMLMarker.prototype = new google.maps.OverlayView();
+    HTMLMarker.prototype.onRemove = function () {}
+
+    //init your html element here
+    HTMLMarker.prototype.onAdd = function () {
+        div = document.createElement('DIV');
+        div.style.position='absolute';
+        div.className = "htmlMarker";
+        div.innerHTML = '<img src="http://www.w3schools.com/html/pic_mountain.jpg" alt="Mountain View" style="width:30px;height:22px">' + 21;
+        var panes = this.getPanes();
+        panes.overlayImage.appendChild(div);
+        this.div=div;
+    }
+
+    HTMLMarker.prototype.draw = function () {
+        var overlayProjection = this.getProjection();
+        var position = overlayProjection.fromLatLngToDivPixel(this.pos);
+        var panes = this.getPanes();
+        this.div.style.left = position.x + 'px';
+        this.div.style.top = position.y - 30 + 'px';
+    }
+
+    //to use it
+    var htmlMarker = new HTMLMarker(52.323907, -150.109291);
+    htmlMarker.setMap(gmap);
+    var htmlMarker = new HTMLMarker(52.323907, -151.109291);
+    htmlMarker.setMap(gmap);
+
+}
+</script>

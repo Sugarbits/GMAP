@@ -4,6 +4,7 @@
     //$uri = "http://ptx.transportdata.tw/MOTC/v2/Bus/RealTimeByFrequency/City/HualienCounty?$top=30&$format=JSON";
     //$uri = "https://www.zhihu.com/question/21471960";
 	//$url = "http://ptx.transportdata.tw/MOTC/v2/Bus/RealTimeByFrequency/City/Taichung?$top=30&$format=JSON";//台中
+	//$url = "temp.html";//
 	$url = "http://ptx.transportdata.tw/MOTC/v2/Bus/RealTimeByFrequency/City/HualienCounty?$top=30&$format=JSON";//花蓮
 	//init curl
 	$ch = curl_init();

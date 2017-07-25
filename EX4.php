@@ -3,14 +3,13 @@
   <head>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
 	<link type="text/css" rel="Stylesheet" href="EX4.css" />
-	
 	<script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.2.1.min.js"></script>
-
     <meta charset="utf-8">
     <title>Simple markers</title>
 	<script>
 	var firsttime = true;//to make history trace effect
 	var btn_value;
+	var btn_marker;
 	var map;//
 	var markers = [];
 	var infos = [];
@@ -69,7 +68,13 @@
 		btn_value = data_val;
 		initail();
 		renew();
-		console.log(data_val);
+		//
+		var tmpLatLng = new google.maps.LatLng(
+					parseFloat(btn_marker.getPosition().lat()),
+					parseFloat(btn_marker.getPosition().lng()));
+		map.panTo(tmpLatLng);
+		//map.setZoom(14);
+		
 	});
     </script>
     <script>
@@ -81,10 +86,11 @@
 		}
 	}
 	function renew(){//ajax抓值
+		if(<?php echo (isset($_GET['test'])) ? 'true' : 'false' ;?> === false){
 		$.getJSON( "crawler/cr_motc_bus.php", function( data ) {
 		$( "#foobar_left" ).html('');
 				if(firsttime == true){//第一次撈
-					firsttime = false;
+					;//firsttime = false;
 					}else{	
 					initail();//清除上一次資料
 				}
@@ -113,6 +119,7 @@
 				$('#latlng').html( data[key]['BusPosition']['PositionLat']+'<br>'+data[key]['BusPosition']['PositionLon']);
 				var marker = add_marker(map,tmpLatLng,tmptitle,tmpcontent);
 				var info = add_info(map,tmpLatLng,tmpcontent);
+				
 				marker.infowindow = new google.maps.InfoWindow(
 				{
 					content: tmpcontent
@@ -121,7 +128,68 @@
 				infos.push(info);
 				//
 			});//$.each END
+			if(firsttime == true){//第一次撈
+			//alert();
+				panto_muti_marker(markers);//轉移
+				firsttime = false;
+				}else{	
+					;//
+			}
 		});
+		}else{
+			$.getJSON( "crawler/temp.html", function( data ) {
+		$( "#foobar_left" ).html('');
+				if(firsttime == true){//第一次撈
+					;//firsttime = false;
+					}else{	
+					initail();//清除上一次資料
+				}
+				$.each( data, function( key, val ) {
+				//console.log(data);
+				var car_no = data[key]['PlateNumb'];//頻繁使用車號
+				//data[key]['PlateNumb']
+				$( "#foobar_left" ).append( "<div class='"+btn_css_render(car_no)+"' data-val='"+car_no+"'>&nbsp;&nbsp;"+car_no+"</div>" );//按鈕生成,觸發自訂義
+				//add_button(data[key]['PlateNumb']);
+				/*
+				console.log(data[key]);
+				console.log(data[key]['BusPosition']['PositionLat']);
+				console.log(data[key]['BusPosition']['PositionLon']);
+				console.log(data[key]['GPSTime']);
+				console.log(data[key]['PlateNumb']);
+				*/
+				//create gmap latlng obj
+				tmpLatLng = {lat : data[key]['BusPosition']['PositionLat'],lng :　data[key]['BusPosition']['PositionLon']};//google map latlng obj 
+				var tmptitle = {name:data[key]['PlateNumb'],time:data[key]['GPSTime']};//google map marker.title 
+				var tmpcontent = "時速: " + data[key]['Speed'] +"km"+  '<br></h3>' + "車號" + car_no; 
+				
+				//給附屬資訊_內容
+				//$('#speed').html(data[key]['UpdateTime']);
+				$('#speed').html(data[key]['Speed']+"KM");
+				$('#car_name').html(car_no);
+				$('#latlng').html( data[key]['BusPosition']['PositionLat']+'<br>'+data[key]['BusPosition']['PositionLon']);
+				var marker = add_marker(map,tmpLatLng,tmptitle,tmpcontent);
+				if(btn_value = car_no){//將選取找出
+				
+					btn_marker = marker;//對應的marker存入
+				}
+				var info = add_info(map,tmpLatLng,tmpcontent);
+				marker.infowindow = new google.maps.InfoWindow(
+				{
+					content: tmpcontent
+				});
+				markers.push(marker);
+				infos.push(info);
+				//
+			});//$.each END
+			if(firsttime == true){//第一次撈
+			//alert();
+				panto_muti_marker(markers);//轉移
+				firsttime = false;
+				}else{	
+					;//
+			}
+		});
+	}
 	}
 		function initail(){
 			for(index in markers){
@@ -150,8 +218,10 @@
 				alert('沒有公車！');
 			}
 		}
+
 		function add_info(a_map,a_latlng,a_content){
 			var infowindow = new google.maps.InfoWindow({                
+				disableAutoPan: true,
 				map: a_map,
 				position: a_latlng,
 				pixelOffset: new google.maps.Size(0,-25),
@@ -176,6 +246,8 @@
 			return marker;
 		}
       function initMap() {
+		  
+		  
        /* var marker = new google.maps.Marker({
           position: myLatLng,
           map: map,
@@ -241,7 +313,7 @@
         controlUI.appendChild(controlText);
 
         // Setup the click event listeners: simply set the map to Chicago.
-		 map.controls[google.maps.ControlPosition.TOP_RIGHT ].push(centerControlDiv);
+		map.controls[google.maps.ControlPosition.TOP_RIGHT ].push(centerControlDiv);
         controlUI.addEventListener('click', function() {
 		panto_muti_marker(markers);
         //map.setCenter(chicago);
@@ -280,11 +352,59 @@
 		}
 		  
 	  }
+
+	  //https://stackoverflow.com/questions/26453741/how-do-i-add-multiple-overlay-markers-in-google-maps-api
 	  
-	  setInterval("renew()",10000);
+	  function HTML_marker_initial(){
+	  ///	  HTML_marker_initail
+	  	  function HTMLMarker(lat, lng) {
+        this.lat = lat;
+        this.lng = lng;
+        this.pos = new google.maps.LatLng(lat, lng);
+    }
+
+    HTMLMarker.prototype = new google.maps.OverlayView();
+    HTMLMarker.prototype.onRemove = function () {}
+
+    //init your html element here
+    HTMLMarker.prototype.onAdd = function () {
+        div = document.createElement('DIV');
+        div.style.position='absolute';
+        div.className = "htmlMarker";
+        div.innerHTML = "<img src='"+now_icon_url+"' alt='Mountain View' style='width:60px;height:60px'>"+'車速：20km<br>'+'車號：222-NNN';
+        var panes = this.getPanes();
+        panes.overlayImage.appendChild(div);
+        this.div=div;
+    }
+
+    HTMLMarker.prototype.draw = function () {
+        var overlayProjection = this.getProjection();
+        var position = overlayProjection.fromLatLngToDivPixel(this.pos);
+        var panes = this.getPanes();
+        this.div.style.left = position.x + 'px';
+        this.div.style.top = position.y - 30 + 'px';
+    }
+/*
+	//to use it
+    var htmlMarker = new HTMLMarker(52.323907, -150.109291);
+    htmlMarker.setMap(map);
+    var htmlMarker = new HTMLMarker(52.323907, -151.109291);
+    htmlMarker.setMap(map);
+	*/
+	  }
+	  
+	  ////
+	  $(function(){
+		$(window).on('load',function(){
+		HTML_marker_initial();
+
+
+         setInterval("renew()",10000);//Here is my logic now
+		});
+	});
+	
 	  
     </script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA0bdKmBEMTJH7qsTjjG_1rfteVrNXzxQk&callback=initMap">
-    </script>
+   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA0bdKmBEMTJH7qsTjjG_1rfteVrNXzxQk&callback=initMap"></script>
   </body>
 </html>
