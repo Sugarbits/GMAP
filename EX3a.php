@@ -14,6 +14,7 @@
 	var info_old = null;
 	var marker_old = null;//to make history trace effect
 	var map;//
+	var car_no_filter = ["009-FV","010-FV","011-FV","075-FV","076-FV","EAA-283","EAA-285","EAA-286","EAA-287","EAA-288","EAA-289","EAA-290","EAA-291","EAA-293","EAA-295","EAA-296"]
 	//現在的位置用圖
 	//var now_icon_url = 'http://maps.google.com/mapfiles/ms/icons/bus.png';	
 	var now_icon_url = 'pic/busicon.png';
