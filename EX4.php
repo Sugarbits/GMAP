@@ -13,6 +13,7 @@
 	var map;//
 	var markers = [];
 	var infos = [];
+	var car_no_filter = ["009-FV","010-FV","011-FV","075-FV","076-FV","EAA-283","EAA-285","EAA-286","EAA-287","EAA-288","EAA-289","EAA-290","EAA-291","EAA-293","EAA-295","EAA-296"]
 	//現在的位置用圖
 	//var now_icon_url = 'http://maps.google.com/mapfiles/ms/icons/bus.png';	
 	var now_icon_url = 'pic/busicon.png';
@@ -97,6 +98,10 @@
 				$.each( data, function( key, val ) {
 				//console.log(data);
 				var car_no = data[key]['PlateNumb'];//頻繁使用車號
+				if(car_no_filter.indexOf(car_no)==-1){//過濾不是本車隊的車號(放在car_no_filter)，
+				//REF:http://www.victsao.com/blog/81-javascript/159-javascript-arr-indexof
+					return;
+				}
 				//data[key]['PlateNumb']
 				$( "#foobar_left" ).append( "<div class='"+btn_css_render(car_no)+"' data-val='"+car_no+"'>&nbsp;&nbsp;"+car_no+"</div>" );//按鈕生成,觸發自訂義
 				//add_button(data[key]['PlateNumb']);
@@ -137,12 +142,13 @@
 			}
 		});
 		}else{
-			$.getJSON( "crawler/temp.html", function( data ) {
+			$.getJSON("crawler/cr_motc_bus_taichung.php", function( data ) {
 		$( "#foobar_left" ).html('');
 				if(firsttime == true){//第一次撈
 					;//firsttime = false;
 					}else{	
 					initail();//清除上一次資料
+					test_cnt = 0;
 				}
 				$.each( data, function( key, val ) {
 				//console.log(data);
