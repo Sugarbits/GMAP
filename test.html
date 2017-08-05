@@ -1,55 +1,43 @@
-<title>Google Maps JavaScript API v3 Example: Overlay Simple</title>
-</head>
-<body onload="initialize()">
-    <div id="map_canvas"></div>
-</body>
-<script></script>
-<script  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA0bdKmBEMTJH7qsTjjG_1rfteVrNXzxQk&callback=initMap">
-var overlay;
+﻿<script>
+/*
+(1)
+0123456
+(2)
+0123456
+78910111213
+(3)
+0a1a2a3a4a5a6a
+7a8a9a10a11a12a13
 
-function initialize() {
-    var myLatLng = new google.maps.LatLng(52.323907, -150.109291);
-    var mapOptions = {
-        zoom: 8,
-        center: myLatLng,
-        mapTypeId: google.maps.MapTypeId.SATELLITE
-    };
+0 0  1  2  3  4  5  6  
+  13 12 11 10 9  8  7
 
-    var gmap = new google.maps.Map(document.getElementById('map_canvas'), mapOptions);
-
-    function HTMLMarker(lat, lng) {
-        this.lat = lat;
-        this.lng = lng;
-        this.pos = new google.maps.LatLng(lat, lng);
-    }
-
-    HTMLMarker.prototype = new google.maps.OverlayView();
-    HTMLMarker.prototype.onRemove = function () {}
-
-    //init your html element here
-    HTMLMarker.prototype.onAdd = function () {
-        div = document.createElement('DIV');
-        div.style.position='absolute';
-        div.className = "htmlMarker";
-        div.innerHTML = '<img src="http://www.w3schools.com/html/pic_mountain.jpg" alt="Mountain View" style="width:30px;height:22px">' + 21;
-        var panes = this.getPanes();
-        panes.overlayImage.appendChild(div);
-        this.div=div;
-    }
-
-    HTMLMarker.prototype.draw = function () {
-        var overlayProjection = this.getProjection();
-        var position = overlayProjection.fromLatLngToDivPixel(this.pos);
-        var panes = this.getPanes();
-        this.div.style.left = position.x + 'px';
-        this.div.style.top = position.y - 30 + 'px';
-    }
-
-    //to use it
-    var htmlMarker = new HTMLMarker(52.323907, -150.109291);
-    htmlMarker.setMap(gmap);
-    var htmlMarker = new HTMLMarker(52.323907, -151.109291);
-    htmlMarker.setMap(gmap);
-
+*/
+var txt=''
+for(var i=0;i<7;i++){
+	txt+=i;
 }
+console.log('第1題');
+console.log(txt);
+
+var txt2=''
+for(var i=0;i<14;i++){
+	txt2+=i;
+	if(i%7 == 0 && i!==0){
+	txt2+='\n';
+	}
+	
+}
+console.log('第2題');
+console.log(txt2);
+var txt3=''
+for(var i=0;i<14;i++){
+	txt3+=i+'a';
+	if(i%7 == 0 && i!==0){
+	txt3+='\n';
+	}
+	
+}
+console.log('第2題');
+console.log(txt3);
 </script>
