@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
-	<link type="text/css" rel="Stylesheet" href="EX5.css" />
+	<link type="text/css" rel="Stylesheet" href="EX5_1.css" />
 	<script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.2.1.min.js"></script>
     <meta charset="utf-8">
     <title>Simple markers</title>
@@ -27,6 +27,9 @@
 		else
 			return padLeft("0" +str,lenght);
 	}
+	function wrap_td_with_id(str,id){
+		return "<td id='"+id+"'>"+str+'</td>';
+	}
 	function wrap_td(str){
 		return '<td>'+str+'</td>';
 	}
@@ -36,9 +39,42 @@
 	function wrap_tb(str){
 		return '<table border=1>'+str+'</table>';
 	}
+	function put_data_on(uid,car_no,time){
+		console.log("#"+uid);
+		//$('#main #TPE30123').html('XXX');
+		if ($("#"+uid).length ) {
+			$("#"+uid).html(car_no+' 還有 <br>'+time+' 秒到站');
+			$("#"+uid).removeClass('fill_empty');
+			$("#"+uid).addClass('fill_sth');
+		}else{
+			$("#"+uid).removeClass('fill_sth');
+			$("#"+uid).addClass('fill_empty');
+		}
+	}
 	function renew2(){
 			$.getJSON( "crawler/cr_motc_bus_arrive_stop.php", function( data ) {
-				console.log(data);
+				for(key in data){
+						//console.log(data);
+						var uid = '';
+						var car_no = '車號(???)';
+						var time = -1;
+						for(key2 in data[key]){
+							if(key2 == 'StopUID'){
+								//console.log(data[key][key2]);
+								uid = data[key][key2];
+							}else if(key2 == 'EstimateTime'){
+								//console.log(data[key][key2]);
+								time = data[key][key2];
+							}/*else if(key2 == 'StopUID'){
+							
+							}*/else{
+								;//...
+							}
+						}
+						if(time !== -1){
+							put_data_on(uid,car_no,time);
+						}
+					}
 				});
 			}
 	function renew(){//ajax抓值
@@ -79,7 +115,7 @@
 								}else{
 									sign = ' → ';	
 								}
-								bus_status += wrap_td(StopUid);
+								bus_status += wrap_td_with_id('&nbsp',StopUid);
 								stop_name += wrap_td(StopName);
 								stop_no += wrap_td(cnt_total+sign);
 							}else if(cnt<=14 && cnt>=8){//include odd and end
@@ -88,7 +124,7 @@
 								}else{
 									sign = ' ← ';
 								}
-								bus_status = wrap_td(StopUid)+bus_status;
+								bus_status = wrap_td_with_id('&nbsp',StopUid)+bus_status;
 								stop_name = wrap_td(StopName)+stop_name;
 								stop_no = wrap_td(cnt_total+sign)+stop_no;
 							}					
@@ -143,6 +179,7 @@
 				}
 				context = wrap_tb(context);
 				$('#main').html(context);
+				renew2();
 			});
 	}
 	/*
@@ -242,9 +279,9 @@
 	  ////
 	  $(function(){
 		 renew();
-		 renew2();
+		 
 		/*$(window).on('load',function(){
-         setInterval("renew()",1000);//Here is my logic now
+         setInterval("renew2()",3000);//Here is my logic now
 		});*/
 	});
 	

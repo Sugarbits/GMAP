@@ -1,0 +1,27 @@
+.stopIconEnd{
+    background-image: url(http://www.e-bus.gov.taipei/newmap/Content/images/%E8%B5%B7%E8%A8%96.png);
+}
+.stopIconR {
+    background-image: url(http://www.e-bus.gov.taipei/newmap/Content/images/StopR.png);
+}
+.stopIconL {
+    background-image: url(http://www.e-bus.gov.taipei/newmap/Content/images/StopL.png);
+}
+.fill{
+    background-color: #006eff;
+    background-repeat: no-repeat;
+}
+.m {
+    height: 10px;
+}
+.relative {
+    position: relative;
+}
+.stopIconR, .stopIconL, .stopIconEnd, .stopIconMRT {
+    background-repeat: no-repeat;
+    background-position: center center;
+    width: 18px;
+    height: 18px;
+    position: absolute;
+    top: -5px;
+}
