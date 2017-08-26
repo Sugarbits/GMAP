@@ -7,10 +7,6 @@
     <meta charset="utf-8">
     <title>Simple markers</title>
 	<script>
-	//v0.15
-	//footer 點車牌觸發關閉->取消
-	//footer 預設隱藏->改成顯示
-	//footer 新增鎖定功能 鎖 定 ★/☆&#9734;
 	var firsttime = true;//to make history trace effect
 	var btn_value;
 	var btn_route_value;
@@ -39,11 +35,11 @@
   </head>
   <body>
    <!--標頭-->
-   <div id="foobar"  class='toggle' style='display:block;'>
+   <div id="foobar"  class='toggle' style='display:none;'>
    
 		<div id="foobar_left">123</div>
 		<div id="foobar_right">
-		<div id='home' class='side'>&nbsp鎖&nbsp定&nbsp<span id='lock'>&#9733;</span></div>
+		<div id='home' class='side'>&nbsp首&nbsp頁&nbsp</div>
 		<div id='close' class='side'>&nbsp關&nbsp閉&nbsp</div>
 		</div>
    </div>
@@ -53,14 +49,14 @@
     <!--附屬資訊_介紹欄位-->
    <div id="footer0"></div>
    <div id="footer1" class="bigger">
-  <!--<div class='box'>車號</div>-->
+   <div class='box'>車號</div>
    <div class='box'>車速</div>
    <div class='box'>抵達時間</div>
    <div class='box'>經緯度</div>
    </div>
    <!--附屬資訊_內容-->
    <div id="footer2">
-   <!--<div id='car_name' class='box bigger'></div>-->
+   <div id='car_name' class='box bigger'></div>
    <div id='speed' class='box bigger'></div>
    <div id='arrive_time' class='box smaller'></div>
    <div id='latlng' class='box smaller'></div>
@@ -73,25 +69,16 @@
     };
 
 	$('#home').on('click', function(){
-		if(lock == false){
-			//console.log($('#lock').html(''));
-			$('#lock').html('★');
-			lock = true;
-		}else{
-			$('#lock').html('☆');
-			lock = false;
-		}
 		panto_muti_marker(markers);
 	});
 	$('#close').on('click', function(){
 		$( ".toggle" ).hide(100,false); 
 	});
 	$('#map').on('click', function(){
-	/*auto hide cancel
+		//console.log($('#foobar').is(":hidden"));
 	  if(($('#foobar').is(":hidden")) == true){
 		$( ".toggle" ).hide(100,false);  
-	}*/
-	;
+	  }
 	});
 	$('#foobar').on('click', '.btn', function(){//泛用的按鈕觸發
 		var data_val = $(this).attr('data-val');
@@ -104,8 +91,7 @@
 			
 		}
 		$(this).addClass('chose');
-		//setTimeout(function(){ runEffect(); }, 800);///auto hide cancel
-		lock = true;
+		setTimeout(function(){ runEffect(); }, 800);
 		toggle = false;
 		btn_direction_value = data_direction_value;
 		btn_route_value = data_route_value;
@@ -134,20 +120,10 @@
 			return 'btn';
 		}
 	}
-	function btn_group_css_render(val){//判定css//btn group用
-		if(btn_value==val){
-			return 'btn_group chose';
-		}else{
-			return 'btn_group';
-		}
-	}
 	function renew(){
 		if(firsttime == false){//非第一次撈
 			clear_bus();//清除上一次資料
 			bus_ajax();
-			if(lock == true){
-				
-			}
 		}else{//第一次撈
 		//console.log(markers);
 		stop_ajax();
@@ -232,16 +208,13 @@
 				//console.log(data);
 				var car_route = data[key]['RouteName']['En'];//路名
 				var car_direction = data[key]['Direction'];//方向
-				var tmpcontent =(car_direction == '1') ? '去程' : '返程';
-				var tmpdirect =(car_direction == '1') ? '(去)' : '(返)';
 				var car_no = data[key]['PlateNumb'];//頻繁使用車號
 				if(car_no_filter.indexOf(car_no)==-1){//過濾不是本車隊的車號(放在car_no_filter)，
 				//REF:http://www.victsao.com/blog/81-javascript/159-javascript-arr-indexof
 					return;
 				}
 				//data[key]['PlateNumb']
-				$( "#foobar_left" ).append( "<div class='"+btn_css_render(car_no)+"' data-direction-val='"+car_direction+"' data-route-val='"+car_route+"' data-val='"+car_no+"'>&nbsp;"+car_no+""+tmpdirect+"</div>" );//按鈕生成,觸發自訂義
-				$( "#foobar_left" ).append( "<div class='"+btn_group_css_render(car_no)+"'>&nbsp;"+car_route+"</div>" );//按鈕生成,觸發自訂義
+				$( "#foobar_left" ).append( "<div class='"+btn_css_render(car_no)+"' data-direction-val='"+car_direction+"' data-route-val='"+car_route+"' data-val='"+car_no+"'>&nbsp;&nbsp;"+car_no+"</div>" );//按鈕生成,觸發自訂義
 
 				
 				if(car_no == btn_value){
@@ -259,23 +232,17 @@
 				//}, 800);//延遲800ms才能讀到 markers ？？待解決
 				
 				var marker = add_marker(map,tmpLatLng,tmptitle,1);
-				if(lock==true){
-					panto_single_marker(marker);	
-				}
 				arrive_msg = bus_arrive_ajax();
-							
+				var tmpcontent =(car_direction == '1') ? '去程' : '返程';			
 				//var tmpcontent = '抵達'+arrive_msg_obj['stopname']+'\n預計時間：'+time_to_word(arrive_msg_obj['time']);
-				
+				var info = add_info(map,tmpLatLng,tmpcontent);
 			
 				/*marker.infowindow = new google.maps.InfoWindow(
 				{
 					content: tmpcontent
 				});*/
 				markers.push(marker);
-				/*v0.15取消
-				//var info = add_info(map,tmpLatLng,tmpcontent);
-				//infos.push(info);
-				*/
+				infos.push(info);
 				//
 				}else{
 					;//非選中車號，不動作
@@ -305,14 +272,6 @@
 		}
 		function initail(){
 
-		}
-		function panto_single_marker(pmarker){//single point panTo
-			var point = new google.maps.LatLng(
-				parseFloat(pmarker.getPosition().lat()),
-				parseFloat(pmarker.getPosition().lng()));
-		   // myLatLng = new google.maps.LatLng(lat, lon);
-			 map.panTo(point);
-			 map.setZoom(18);
 		}
 		function panto_muti_marker(pmarkers){
 			if(pmarkers.length != 0){

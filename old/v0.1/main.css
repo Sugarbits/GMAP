@@ -1,0 +1,95 @@
+	/*	本人定義的	 */
+		body, html {width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden;}
+	#map{
+		z-index: 1;
+		top:0%;
+		position:absolute;
+		width:100%;
+		height:88vh;
+		background-color:black;
+	}
+	#foobar{
+		z-index: 2;
+		top:0%;
+		position:absolute;
+		width:100%;
+		height:15vh;
+		background-color:pink;
+	}
+	#foobar_left{
+		z-index: 2;
+		margin: 0;
+		padding: 0;
+		width:90%;
+		height:15vh;
+		//background-color:green;
+		float:left;
+	}
+	#foobar_right{
+		z-index: 2;
+		margin: 0;
+		padding: 0;
+		width:10%;
+		height:15vh;
+		//background-color:blue;
+		float:left;
+	}
+	#footer0{
+		width:100%;
+		height:88vh;
+		background-color:pink;
+	}
+	#footer1{
+		width:100%;
+		height:6vh;
+		background-color:gray;
+	}
+	#footer2{
+		width:100%;
+		height:6vh;
+		background-color:gray;
+	}
+	.box{
+		font-weight: bold;
+		margin:0.5% 0.5% 0% 1.5%;
+		height:5vh;
+		width:22%;
+		background-color:black;
+		float:left;
+		color:white;
+	}
+	.bigger{
+		font-size:25px;
+	}
+	.smaller{
+		font-size:16px;
+		vertical-align: text-top;
+	}
+	.side{
+		font-size:15px;
+		font-weight: bold;
+		-webkit-writing-mode: vertical-lr;
+		writing-mode: vertical-lr ;
+		margin-left: 1%;
+		height:15vh;
+		width:45%;
+		background-color:#4286f4;
+		float:right;
+
+	}
+	.btn{
+		font-size:12px;
+		font-weight: bold;
+		-webkit-writing-mode: vertical-lr;
+		writing-mode: vertical-lr ;
+		margin:1%;
+		height:10vh;
+		width:6%;
+		background-color:red;
+		float:left;
+	}
+
+	.chose{
+		background-color:blue;
+		color:white;
+	}
