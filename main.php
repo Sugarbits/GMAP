@@ -50,6 +50,8 @@
 
    <!--地圖主體-->
    <div id="map"></div>
+   <!--時刻表主體-->
+   <div id="timetable"></div>
     <!--附屬資訊_介紹欄位-->
    <div id="footer0"></div>
    <div id="footer1" class="bigger">

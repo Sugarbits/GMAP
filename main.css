@@ -3,10 +3,22 @@
 	#map{
 		z-index: 1;
 		top:0%;
-		position:absolute;
-		width:100%;
+		//position:absolute;
+		float:left;
+		width:80%;
 		height:88vh;
 		background-color:black;
+	}
+	#timetable{
+		z-index: 1;
+		top:0%;
+		//position:absolute;
+		float:left;
+		width:20%;
+		margin-top:15vh;
+		height:73vh;
+		background-color:black;
+
 	}
 	#foobar{
 		z-index: 2;
@@ -65,6 +77,8 @@
 		font-size:16px;
 		vertical-align: text-top;
 	}
+
+	
 	.side{
 		font-size:15px;
 		font-weight: bold;
