@@ -3,6 +3,7 @@
   <head>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
 	<link type="text/css" rel="Stylesheet" href="main.css" />
+	<link type="text/css" rel="Stylesheet" href="scrollbar.css" />
 	<script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.2.1.min.js"></script>
     <meta charset="utf-8">
     <title>Simple markers</title>
@@ -11,6 +12,7 @@
 	//footer 點車牌觸發關閉->取消
 	//footer 預設隱藏->改成顯示
 	//footer 新增鎖定功能 鎖 定 ★/☆&#9734;
+	var ttb_iframe = '';
 	var firsttime = true;//to make history trace effect
 	var btn_value;
 	var btn_route_value;
@@ -51,7 +53,8 @@
    <!--地圖主體-->
    <div id="map"></div>
    <!--時刻表主體-->
-   <div id="timetable"></div>
+   <div id="timetable">
+   <iframe id='ttb' frameborder="0" height='100%' marginwidth="0" marginheight="0" scrolling="auto" onload="" allowtransparency="false" src="../MOTC/show_stops_dynamic_part.php?route=303&direct=0&citycode=HualienCounty" frameborder="0"></iframe></div>
     <!--附屬資訊_介紹欄位-->
    <div id="footer0"></div>
    <div id="footer1" class="bigger">
@@ -95,12 +98,12 @@
 	}*/
 	;
 	});
-	$('#foobar').on('click', '.btn', function(){//泛用的按鈕觸發
+	$('#foobar').on('click', '.btn_group', function(){//泛用的按鈕觸發
 		var data_val = $(this).attr('data-val');
 		var data_route_value = $(this).attr('data-route-val');
 		var data_direction_value = $(this).attr('data-direction-val');
 		if(btn_value!==null){
-			$(".btn").each(function() {
+			$(".btn_group").each(function() {
 				$(this).removeClass('chose');
 			});
 			
@@ -112,6 +115,12 @@
 		btn_direction_value = data_direction_value;
 		btn_route_value = data_route_value;
 		btn_value = data_val;
+		//時刻表切換
+		var ttb_src = "../MOTC/show_stops_dynamic_part.php?route="+btn_route_value+"&direct="+btn_direction_value+"&citycode=HualienCounty";
+		console.log(ttb_src);
+		ttb_iframe.src = ttb_src;
+		//時刻表切換 END
+		
 		firsttime = true;
 		clear_bus();
 		clear_stop();
@@ -129,18 +138,25 @@
 		var s = sec%60;
 		return m +'分'+ s + '秒';
 	}
-	function btn_css_render(val){//判定css
-		if(btn_value==val){
-			return 'btn chose';
-		}else{
-			return 'btn';
-		}
-	}
-	function btn_group_css_render(val){//判定css//btn group用
+	function btn_group_css_render(val){//判定css
 		if(btn_value==val){
 			return 'btn_group chose';
 		}else{
 			return 'btn_group';
+		}
+	}
+	function btn_css_render(val){//判定css
+		if(btn_value==val){
+			return 'btn_self chose';
+		}else{
+			return 'btn_self';
+		}
+	}
+	function btn_type_css_render(val){//判定css//btn group用
+		if(btn_value==val){
+			return 'btn_type chose';
+		}else{
+			return 'btn_type';
 		}
 	}
 	function renew(){
@@ -234,16 +250,17 @@
 				//console.log(data);
 				var car_route = data[key]['RouteName']['En'];//路名
 				var car_direction = data[key]['Direction'];//方向
-				var tmpcontent =(car_direction == '1') ? '去程' : '返程';
 				var tmpdirect =(car_direction == '1') ? '(去)' : '(返)';
 				var car_no = data[key]['PlateNumb'];//頻繁使用車號
+				var tmpcontent =car_no;
 				if(car_no_filter.indexOf(car_no)==-1){//過濾不是本車隊的車號(放在car_no_filter)，
 				//REF:http://www.victsao.com/blog/81-javascript/159-javascript-arr-indexof
 					return;
 				}
 				//data[key]['PlateNumb']
-				$( "#foobar_left" ).append( "<div class='"+btn_css_render(car_no)+"' data-direction-val='"+car_direction+"' data-route-val='"+car_route+"' data-val='"+car_no+"'>&nbsp;"+car_no+""+tmpdirect+"</div>" );//按鈕生成,觸發自訂義
-				$( "#foobar_left" ).append( "<div class='"+btn_group_css_render(car_no)+"'>&nbsp;"+car_route+"</div>" );//按鈕生成,觸發自訂義
+				$( "#foobar_left" ).append( "<div id='_"+key+"' class='"+btn_group_css_render(car_no)+"' data-direction-val='"+car_direction+"' data-route-val='"+car_route+"' data-val='"+car_no+"'></div>" );//按鈕生成,觸發自訂義
+				$( "#_"+key+"" ).append( "<div class='"+btn_css_render(car_no)+"'>&nbsp;"+car_no+""+tmpdirect+"</div>" );//按鈕生成,觸發自訂義
+				$( "#_"+key+"" ).append( "<div class='"+btn_type_css_render(car_no)+"'>&nbsp;"+car_route+"</div>" );//按鈕生成,觸發自訂義
 
 				
 				if(car_no == btn_value){
@@ -274,10 +291,10 @@
 					content: tmpcontent
 				});*/
 				markers.push(marker);
-				/*v0.15取消
-				//var info = add_info(map,tmpLatLng,tmpcontent);
-				//infos.push(info);
-				*/
+				//info shows num
+				var info = add_info(map,tmpLatLng,tmpcontent);
+				infos.push(info);
+				
 				//
 				}else{
 					;//非選中車號，不動作
@@ -491,6 +508,7 @@
 	  $(function(){
 		$(window).on('load',function(){
 		HTML_marker_initial();
+		ttb_iframe = document.getElementById('ttb');
          setInterval("renew()",10000);//Here is my logic now
 		});
 	});
