@@ -3,16 +3,10 @@
   <head>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
 	<link type="text/css" rel="Stylesheet" href="main.css" />
-	<link type="text/css" rel="Stylesheet" href="scrollbar.css" />
 	<script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.2.1.min.js"></script>
     <meta charset="utf-8">
     <title>Simple markers</title>
 	<script>
-	//v0.15
-	//footer 點車牌觸發關閉->取消
-	//footer 預設隱藏->改成顯示
-	//footer 新增鎖定功能 鎖 定 ★/☆&#9734;
-	var ttb_iframe = '';
 	var firsttime = true;//to make history trace effect
 	var btn_value;
 	var btn_route_value;
@@ -41,32 +35,28 @@
   </head>
   <body>
    <!--標頭-->
-   <div id="foobar"  class='toggle' style='display:block;'>
+   <div id="foobar"  class='toggle' style='display:none;'>
    
-		<div id="foobar_left"></div>
+		<div id="foobar_left">123</div>
 		<div id="foobar_right">
-		<div id='home' class='side'>&nbsp鎖&nbsp定&nbsp<span id='lock'>&#9733;</span></div>
+		<div id='home' class='side'>&nbsp首&nbsp頁&nbsp</div>
 		<div id='close' class='side'>&nbsp關&nbsp閉&nbsp</div>
 		</div>
    </div>
 
    <!--地圖主體-->
    <div id="map"></div>
-   <!--時刻表主體-->
-   <div id="timetable">
-   <!--<iframe id='ttb' frameborder="0" height='100%' marginwidth="0" marginheight="0" scrolling="auto" onload="" allowtransparency="false" src="../MOTC/show_stops_dynamic_part_ui.php?route=303&direct=0&citycode=HualienCounty" frameborder="0"></iframe></div>-->
-   <iframe id='ttb' frameborder="0" height='100%' marginwidth="0" marginheight="0" scrolling="auto" onload="" allowtransparency="false" src="dummy.php" frameborder="0"></iframe></div>
     <!--附屬資訊_介紹欄位-->
    <div id="footer0"></div>
    <div id="footer1" class="bigger">
-  <!--<div class='box'>車號</div>-->
+   <div class='box'>車號</div>
    <div class='box'>車速</div>
    <div class='box'>抵達時間</div>
    <div class='box'>經緯度</div>
    </div>
    <!--附屬資訊_內容-->
    <div id="footer2">
-   <!--<div id='car_name' class='box bigger'></div>-->
+   <div id='car_name' class='box bigger'></div>
    <div id='speed' class='box bigger'></div>
    <div id='arrive_time' class='box smaller'></div>
    <div id='latlng' class='box smaller'></div>
@@ -79,52 +69,33 @@
     };
 
 	$('#home').on('click', function(){
-		if(lock == false){
-			//console.log($('#lock').html(''));
-			$('#lock').html('★');
-			lock = true;
-		}else{
-			$('#lock').html('☆');
-			lock = false;
-		}
 		panto_muti_marker(markers);
 	});
 	$('#close').on('click', function(){
 		$( ".toggle" ).hide(100,false); 
 	});
 	$('#map').on('click', function(){
-	/*auto hide cancel
+		//console.log($('#foobar').is(":hidden"));
 	  if(($('#foobar').is(":hidden")) == true){
 		$( ".toggle" ).hide(100,false);  
-	}*/
-	;
+	  }
 	});
-	$('#foobar').on('click', '.btn_group', function(){//泛用的按鈕觸發
-		if($(this).hasClass( "inactive" )){
-			return 0;
-		}
+	$('#foobar').on('click', '.btn', function(){//泛用的按鈕觸發
 		var data_val = $(this).attr('data-val');
 		var data_route_value = $(this).attr('data-route-val');
 		var data_direction_value = $(this).attr('data-direction-val');
 		if(btn_value!==null){
-			$(".btn_group").each(function() {
+			$(".btn").each(function() {
 				$(this).removeClass('chose');
 			});
 			
 		}
 		$(this).addClass('chose');
-		//setTimeout(function(){ runEffect(); }, 800);///auto hide cancel
-		lock = true;
+		setTimeout(function(){ runEffect(); }, 800);
 		toggle = false;
 		btn_direction_value = data_direction_value;
 		btn_route_value = data_route_value;
 		btn_value = data_val;
-		//時刻表切換
-		var ttb_src = "../MOTC/show_stops_dynamic_part_ui.php?route="+btn_route_value+"&direct="+btn_direction_value+"&citycode=HualienCounty";
-		console.log(ttb_src);
-		ttb_iframe.src = ttb_src;
-		//時刻表切換 END
-		
 		firsttime = true;
 		clear_bus();
 		clear_stop();
@@ -142,43 +113,17 @@
 		var s = sec%60;
 		return m +'分'+ s + '秒';
 	}
-	function btn_group_css_render(val){//判定css
-		if(val == -1){
-			return 'btn_group inactive';
-		}
-		if(btn_value==val){
-			return 'btn_group chose';
-		}else{
-			return 'btn_group active';
-		}
-	}
 	function btn_css_render(val){//判定css
-		if(val == -1){
-			return 'btn_self inactive';
-		}
 		if(btn_value==val){
-			return 'btn_self chose';
+			return 'btn chose';
 		}else{
-			return 'btn_self active';
-		}
-	}
-	function btn_type_css_render(val){//判定css//btn group用
-		if(val == -1){
-			return 'btn_type inactive';
-		}
-		if(btn_value==val){
-			return 'btn_type chose';
-		}else{
-			return 'btn_type active';
+			return 'btn';
 		}
 	}
 	function renew(){
 		if(firsttime == false){//非第一次撈
 			clear_bus();//清除上一次資料
 			bus_ajax();
-			if(lock == true){
-				
-			}
 		}else{//第一次撈
 		//console.log(markers);
 		stop_ajax();
@@ -220,7 +165,7 @@
 		});
 		}
 	}
-	function refresh_footer(speed,car_no,lat,lon){		
+	function refresh_footer(speed,car_no,lat,lon){	
 			$('#speed').html(speed+"KM");
 			$('#car_name').html(car_no);
 			$('#latlng').html( lat+'<br>'+lon);
@@ -257,51 +202,20 @@
 	}
 	function bus_ajax(){//ajax抓值
 		console.log('公車抓值');
-		/*var data_obj={
-			id:[],
-			outer_class:[],
-			inner_btn_class:[],
-			inner_btn_type_class:[],
-			inner_btn_type_val:{
-				direction_word:[]	
-			},			
-			outer_val:{
-				direction:[],	
-				route:[],	
-				num:[]	
-			}
-		};*/
 		$.getJSON( "crawler/cr_motc_bus.php", function( data ) {
+		$( "#foobar_left" ).html('');
 				$.each( data, function( key, val ) {
 				//console.log(data);
 				var car_route = data[key]['RouteName']['En'];//路名
 				var car_direction = data[key]['Direction'];//方向
-				var tmpdirect =(car_direction == '1') ? '去' : '返';
 				var car_no = data[key]['PlateNumb'];//頻繁使用車號
-				var tmpcontent =car_no;
-				var car_no_index = car_no_filter.indexOf(car_no);
-				if(car_no_index==-1){//過濾不是本車隊的車號(放在car_no_filter)，
+				if(car_no_filter.indexOf(car_no)==-1){//過濾不是本車隊的車號(放在car_no_filter)，
 				//REF:http://www.victsao.com/blog/81-javascript/159-javascript-arr-indexof
 					return;
 				}
 				//data[key]['PlateNumb']
+				$( "#foobar_left" ).append( "<div class='"+btn_css_render(car_no)+"' data-direction-val='"+car_direction+"' data-route-val='"+car_route+"' data-val='"+car_no+"'>&nbsp;&nbsp;"+car_no+"</div>" );//按鈕生成,觸發自訂義
 
-				/*todo*/
-				$("#_"+car_no_index).attr('data-direction-val',car_direction);
-				$("#_"+car_no_index).attr('data-route-val',car_route);
-				$("#_"+car_no_index).attr('data-val',car_no);
-				$("#_"+car_no_index).removeClass('chose inactive');
-				$("#_"+car_no_index).addClass(btn_group_css_render(car_no));//
-				$("#_"+car_no_index+" > :nth-child(1)").removeClass('chose inactive');
-				$("#_"+car_no_index+" > :nth-child(1)").addClass(btn_css_render(car_no));
-				$("#_"+car_no_index+" > :nth-child(2)").html(car_route+'('+tmpdirect+')');
-				$("#_"+car_no_index+" > :nth-child(2)").removeClass('chose inactive');
-				$("#_"+car_no_index+" > :nth-child(2)").addClass(btn_type_css_render(car_no));
-				/*
-				$( "#foobar_left" ).append( "<div id='_"+key+"' class='"+btn_group_css_render(car_no)+"' data-direction-val='"+car_direction+"' data-route-val='"+car_route+"' data-val='"+car_no+"'></div>" );//按鈕生成,觸發自訂義
-				$( "#_"+key+"" ).append( "<div class='"+btn_css_render(car_no)+"'>&nbsp;"+car_no+""+tmpdirect+"</div>" );//按鈕生成,觸發自訂義
-				$( "#_"+key+"" ).append( "<div class='"+btn_type_css_render(car_no)+"'>&nbsp;"+car_route+"</div>" );//按鈕生成,觸發自訂義
-				*/
 				
 				if(car_no == btn_value){
 				
@@ -318,23 +232,18 @@
 				//}, 800);//延遲800ms才能讀到 markers ？？待解決
 				
 				var marker = add_marker(map,tmpLatLng,tmptitle,1);
-				if(lock==true){
-					panto_single_marker(marker);	
-				}
 				arrive_msg = bus_arrive_ajax();
-							
+				var tmpcontent =(car_direction == '1') ? '去程' : '返程';			
 				//var tmpcontent = '抵達'+arrive_msg_obj['stopname']+'\n預計時間：'+time_to_word(arrive_msg_obj['time']);
+				var info = add_info(map,tmpLatLng,tmpcontent);
 				
-			
+				panto_single_marker(marker);
 				/*marker.infowindow = new google.maps.InfoWindow(
 				{
 					content: tmpcontent
 				});*/
 				markers.push(marker);
-				//info shows num
-				var info = add_info(map,tmpLatLng,tmpcontent);
 				infos.push(info);
-				
 				//
 				}else{
 					;//非選中車號，不動作
@@ -362,14 +271,8 @@
 			stop_infos = [];
 			console.log('消除車站');
 		}
-		function footer_initail(bus_list){
-			//footer_initail(car_no_filter)
-			//btn_group_css_render/btn_css_render/btn_type_css_render
-			for(key in bus_list){
-				$( "#foobar_left" ).append( "<div id='_"+key+"' class='"+btn_group_css_render(-1)+"' data-direction-val='' data-route-val='' data-val=''></div>" );//按鈕生成,觸發自訂義
-				$( "#_"+key+"" ).append( "<div class='"+btn_css_render(-1)+"'>&nbsp;"+bus_list[key]+"</div>" );//按鈕生成,觸發自訂義
-				$( "#_"+key+"" ).append( "<div class='"+btn_type_css_render(-1)+"'>&nbsp;</div>" );//按鈕生成,觸發自訂義
-			}
+		function initail(){
+
 		}
 		function panto_single_marker(pmarker){//single point panTo
 			var point = new google.maps.LatLng(
@@ -554,9 +457,6 @@
 	  $(function(){
 		$(window).on('load',function(){
 		HTML_marker_initial();
-		footer_initail(car_no_filter);
-		ttb_iframe = document.getElementById('ttb');
-			renew();
          setInterval("renew()",10000);//Here is my logic now
 		});
 	});

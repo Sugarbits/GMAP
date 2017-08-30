@@ -5,6 +5,8 @@
 	<link type="text/css" rel="Stylesheet" href="main.css" />
 	<link type="text/css" rel="Stylesheet" href="scrollbar.css" />
 	<script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.2.1.min.js"></script>
+	<link href="json-tree-master/css/jsontree.css" rel="stylesheet">
+	<script src="json-tree-master/src/jsontree.js"></script>
     <meta charset="utf-8">
     <title>Simple markers</title>
 	<script>
@@ -51,12 +53,16 @@
    </div>
 
    <!--地圖主體-->
+   <div id="json_text2">
    <div id="map"></div>
+   </div>
    <!--時刻表主體-->
+   <div id="json_text">
    <div id="timetable">
    <!--<iframe id='ttb' frameborder="0" height='100%' marginwidth="0" marginheight="0" scrolling="auto" onload="" allowtransparency="false" src="../MOTC/show_stops_dynamic_part_ui.php?route=303&direct=0&citycode=HualienCounty" frameborder="0"></iframe></div>-->
    <iframe id='ttb' frameborder="0" height='100%' marginwidth="0" marginheight="0" scrolling="auto" onload="" allowtransparency="false" src="dummy.php" frameborder="0"></iframe></div>
     <!--附屬資訊_介紹欄位-->
+	</div>
    <div id="footer0"></div>
    <div id="footer1" class="bigger">
   <!--<div class='box'>車號</div>-->
@@ -240,7 +246,8 @@
 		console.log("crawler/outter_motc_bus_arrive.php?citycode=HualienCounty&platenumb="+btn_value+"&route="+btn_route_value+"&direction="+btn_direction_value);
 		var promise
 		$.getJSON( "crawler/outter_motc_bus_arrive.php?citycode=HualienCounty&platenumb="+btn_value+"&route="+btn_route_value+"&direction="+btn_direction_value, function( data ) {
-			$.each( data, function( key, val ) {
+			json_text2(data);
+		$.each( data, function( key, val ) {
 				//console.log(val['EstimateTime']);
 				arrive_msg_obj['time'] = val['EstimateTime'];
 				arrive_msg_obj['stopname'] = val['StopName']['Zh_tw'];
@@ -273,6 +280,7 @@
 		};*/
 		$.getJSON( "crawler/cr_motc_bus.php", function( data ) {
 				$.each( data, function( key, val ) {
+				json_show(data);
 				//console.log(data);
 				var car_route = data[key]['RouteName']['En'];//路名
 				var car_direction = data[key]['Direction'];//方向
@@ -550,6 +558,12 @@
     htmlMarker.setMap(map);
 	*/
 }
+		function json_show(data){
+			$('#json_text').html(JSONTree.create(data));
+		}
+		function json_show2(data){
+			$('#json_text2').html(JSONTree.create(data));
+		}
 	  ////
 	  $(function(){
 		$(window).on('load',function(){
