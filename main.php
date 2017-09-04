@@ -45,17 +45,17 @@
    
 		<div id="foobar_left"></div>
 		<div id="foobar_right">
-		<div id='home' class='side'>&nbsp鎖&nbsp定&nbsp<span id='lock'>&#9733;</span></div>
-		<div id='close' class='side'>&nbsp關&nbsp閉&nbsp</div>
+		<div id='home' class='btn_func'>&nbsp鎖&nbsp定&nbsp<span id='lock'>&#9733;</span></div>
+		<div id='close' class='btn_func'>&nbsp關&nbsp閉&nbsp</div>
 		</div>
    </div>
-
    <!--地圖主體-->
    <div id="map"></div>
    <!--時刻表主體-->
    <div id="timetable">
    <!--<iframe id='ttb' frameborder="0" height='100%' marginwidth="0" marginheight="0" scrolling="auto" onload="" allowtransparency="false" src="../MOTC/show_stops_dynamic_part_ui.php?route=303&direct=0&citycode=HualienCounty" frameborder="0"></iframe></div>-->
-   <iframe id='ttb' frameborder="0" height='100%' marginwidth="0" marginheight="0" scrolling="auto" onload="" allowtransparency="false" src="dummy.php" frameborder="0"></iframe></div>
+   <iframe id='ttb' frameborder="0" height='100%' marginwidth="0" marginheight="0" scrolling="auto" onload="" allowtransparency="false" src="dummy.php" frameborder="0"></iframe>
+   </div>
     <!--附屬資訊_介紹欄位-->
    <div id="footer0"></div>
    <div id="footer1" class="bigger">
@@ -120,7 +120,7 @@
 		btn_route_value = data_route_value;
 		btn_value = data_val;
 		//時刻表切換
-		var ttb_src = "../MOTC/show_stops_dynamic_part_ui.php?route="+btn_route_value+"&direct="+btn_direction_value+"&citycode=HualienCounty";
+		var ttb_src = "../GMAP/show_stops_dynamic_part_ui.php?route="+btn_route_value+"&direct="+btn_direction_value+"&citycode=HualienCounty";
 		console.log(ttb_src);
 		ttb_iframe.src = ttb_src;
 		//時刻表切換 END
@@ -152,32 +152,17 @@
 			return 'btn_group active';
 		}
 	}
+	/*
 	function btn_css_render(val){//判定css
-		if(val == -1){
-			return 'btn_self inactive';
-		}
-		if(btn_value==val){
-			return 'btn_self chose';
-		}else{
-			return 'btn_self active';
-		}
-	}
 	function btn_type_css_render(val){//判定css//btn group用
-		if(val == -1){
-			return 'btn_type inactive';
-		}
-		if(btn_value==val){
-			return 'btn_type chose';
-		}else{
-			return 'btn_type active';
-		}
-	}
+	皆刪除，只需最外層變色即可
+	*/
 	function renew(){
 		if(firsttime == false){//非第一次撈
 			clear_bus();//清除上一次資料
 			bus_ajax();
 			if(lock == true){
-				
+				;
 			}
 		}else{//第一次撈
 		//console.log(markers);
@@ -220,7 +205,7 @@
 		});
 		}
 	}
-	function refresh_footer(speed,car_no,lat,lon){		
+	function refresh_footer(speed,car_no,lat,lon){
 			$('#speed').html(speed+"KM");
 			$('#car_name').html(car_no);
 			$('#latlng').html( lat+'<br>'+lon);
@@ -292,11 +277,11 @@
 				$("#_"+car_no_index).attr('data-val',car_no);
 				$("#_"+car_no_index).removeClass('chose inactive');
 				$("#_"+car_no_index).addClass(btn_group_css_render(car_no));//
-				$("#_"+car_no_index+" > :nth-child(1)").removeClass('chose inactive');
-				$("#_"+car_no_index+" > :nth-child(1)").addClass(btn_css_render(car_no));
+				//$("#_"+car_no_index+" > :nth-child(1)").removeClass('chose inactive');
+				//$("#_"+car_no_index+" > :nth-child(1)").addClass(btn_css_render(car_no));
 				$("#_"+car_no_index+" > :nth-child(2)").html(car_route+'('+tmpdirect+')');
-				$("#_"+car_no_index+" > :nth-child(2)").removeClass('chose inactive');
-				$("#_"+car_no_index+" > :nth-child(2)").addClass(btn_type_css_render(car_no));
+				//$("#_"+car_no_index+" > :nth-child(2)").removeClass('chose inactive');
+				//$("#_"+car_no_index+" > :nth-child(2)").addClass(btn_type_css_render(car_no));
 				/*
 				$( "#foobar_left" ).append( "<div id='_"+key+"' class='"+btn_group_css_render(car_no)+"' data-direction-val='"+car_direction+"' data-route-val='"+car_route+"' data-val='"+car_no+"'></div>" );//按鈕生成,觸發自訂義
 				$( "#_"+key+"" ).append( "<div class='"+btn_css_render(car_no)+"'>&nbsp;"+car_no+""+tmpdirect+"</div>" );//按鈕生成,觸發自訂義
@@ -334,8 +319,7 @@
 				//info shows num
 				var info = add_info(map,tmpLatLng,tmpcontent);
 				infos.push(info);
-				
-				//
+
 				}else{
 					;//非選中車號，不動作
 				}
@@ -367,8 +351,8 @@
 			//btn_group_css_render/btn_css_render/btn_type_css_render
 			for(key in bus_list){
 				$( "#foobar_left" ).append( "<div id='_"+key+"' class='"+btn_group_css_render(-1)+"' data-direction-val='' data-route-val='' data-val=''></div>" );//按鈕生成,觸發自訂義
-				$( "#_"+key+"" ).append( "<div class='"+btn_css_render(-1)+"'>&nbsp;"+bus_list[key]+"</div>" );//按鈕生成,觸發自訂義
-				$( "#_"+key+"" ).append( "<div class='"+btn_type_css_render(-1)+"'>&nbsp;</div>" );//按鈕生成,觸發自訂義
+				$( "#_"+key+"" ).append( "<div class='btn_self'>&nbsp;"+bus_list[key]+"</div>" );//按鈕生成,觸發自訂義
+				$( "#_"+key+"" ).append( "<div class='btn_type'>&nbsp;</div>" );//按鈕生成,觸發自訂義
 			}
 		}
 		function panto_single_marker(pmarker){//single point panTo

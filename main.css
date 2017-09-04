@@ -3,21 +3,33 @@
 		iframe {display:block;width:100%;}
 	#map{
 		z-index: 1;
-		top:0%;
+		top:15vh;
+		margin-left:5vh;
 		//position:absolute;
 		float:left;
-		width:70%;
-		height:88vh;
+		width:65vw;
+		height:73vh;//88-15
 		background-color:black;
-		//border-radius: 25px;
-	}
+		border-radius: 1vw;
+		border:2px solid #3F5680;
+		}
 	#timetable{
 		z-index: 1;
 		top:0%;
-		float:left;
-		width:30%;
+		float:right;
+		width:30vw;
 		margin-top:15vh;
 		height:73vh;
+		background-color:#59BABA;
+		//border-radius: 25px;
+	}
+	#timer{
+		z-index: 1;
+		top:0%;
+		float:left;
+		width:100%;
+		margin-top:15vh;
+		height:2vh;
 		background-color:#59BABA;
 		//border-radius: 25px;
 	}
@@ -73,60 +85,69 @@
 		float:left;
 		color:white;
 		text-align: center;
-		border-radius: 25px;
+		border-radius: 1vw;
 	}
 	.bigger{
-		font-size:25px;
+		font-size:4vh;
 	}
 	.smaller{
-		font-size:16px;
+		font-size:2.5vh;
 		vertical-align: text-top;
-	}
-	.side{
-		font-size:15px;
-		font-weight: bold;
-		-webkit-writing-mode: vertical-lr;
-		writing-mode: vertical-lr ;
-		margin-left: 1%;
-		height:15vh;
-		width:45%;
-		background-color:#4286f4;
-		float:right;
-		border-radius: 5px;
-
 	}
 	.inactive{
 		background-color:#D9D9D9;
+		border:2px solid gray;
 	}
 	.active{
+		border:2px solid #3F5680;
 		background-color:#93D250;
 	}
+	.chose{
+		background-color:#02AFF3;
+		border:2px solid pink;
+		color:white;
+	}
 	.btn_self{
-		font-size:12px;
+		line-height:7.5vh;
+		font-size:1.5vh;
 		font-weight: bold;
-		margin:1%;
-		height:5vh;
-		width:8em;
-		//background-color:red;
-		//float:left;
+		margin-left:1.5vh;
+		height:50%;
+		width:100%;
+		background-color:transparent;
 	}
 	.btn_type{
-		font-size:12px;
+		font-size:1.5vh;
 		font-weight: bold;
-		margin-top:-1%; 
-		margin-left:1%; 
-		margin-right:1%; 
-		margin-bottom:1%; 
-		height:5vh;
-		width:8em;
-		//background-color:red;
+		margin-top:1.5vh;
+		margin-left:1.5vh;
+		height:50%;
+		width:100%;
+		background-color:transparent;
 	}
 	.btn_group{
 		margin-left:0.5%; 
+		margin-top:0.5%; 
+		border-radius: 1vw;
+		height:9vh;
+		width:4.5vw;
 		float:left;
 	}
-	
-	.chose{
-		background-color:#02AFF3;
-		color:white;
+	.btn_func{
+		-webkit-writing-mode: vertical-lr;
+		writing-mode: vertical-lr ;
+		display:flex;
+		display: inline-flex;
+		justify-content:center;
+		align-items:center;
+		font-size:1.5vh;
+		font-weight: bold;
+		margin-right:0.5%; 
+		margin-top:0.5%; 
+		border-radius: 1vw;
+		height:9vh;
+		width:4.5vw;
+		background-color:#4286f4;
+		border:2px solid white;
+		float:right;
 	}
