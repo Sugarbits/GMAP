@@ -10,7 +10,10 @@
 	}
 	*/
 	@$func = $_GET['func'];
-	if($func == '0'){
+	if($func == '-1'){
+		$url = 'http://ptx.transportdata.tw/MOTC/v2/Bus/Schedule/City/'.$_GET['citycode'].'/'.$_GET['route'].'?$filter=Direction%20eq%20%27'.$_GET['direct'].'%27&$format=JSON';
+	}
+	else if($func == '0'){
 		//$url = 'http://ptx.transportdata.tw/MOTC/v2/Bus/EstimatedTimeOfArrival/City/'.$_GET['citycode'].'/'.$_GET['route'].'?$select=RouteName%2CDirection%2CStopSequence&$filter=Direction%20eq%20%27'.$_GET['direct'].'%27&$orderby=StopSequence%20asc&$top=1&$format=JSON';	
 		//$url = 'http://ptx.transportdata.tw/MOTC/v2/Bus/StopOfRoute/City/'.$_GET['citycode'].'/'.$_GET['route'].'?$select=RouteName%2COperatorID%2CDirection%2CStops&$format=JSON';
 		$url = 'http://ptx.transportdata.tw/MOTC/v2/Bus/StopOfRoute/City/'.$_GET['citycode'].'/'.$_GET['route'].'?$filter=Direction%20eq%20%27'.$_GET['direct'].'%27&$format=JSON';

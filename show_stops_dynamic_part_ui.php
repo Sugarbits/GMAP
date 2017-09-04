@@ -102,11 +102,23 @@ echo $jsword;
 		text-align: center;
 		vertical-align: text-top;
 }
+.timetable_btn2{
+		font-size:15px;
+		border: 2px solid #95B3D5; 
+		background: #95B3D5;
+		width: 200px;
+		height: 2em; 
+		line-height:2em;
+		border-radius: 25px;
+		text-align: center;
+		vertical-align: text-top;
+}
 //ui-design END
   </style>
   </head>
   <body>
   <h1 class='timetable_btn' id='routecode'></h1>
+  <h1 class='timetable_btn2' id='nextbus'></h1>
   <span id='open_self' class="ui-icon ui-icon-document-b"></span>
 
   <!--<h1 id='routename'></h1>-->
@@ -177,7 +189,7 @@ echo $jsword;
 			}
 		
 		},
-		initial:function(){
+		initial:function(){//bus stops
 			//ajax once data
 			var RouteName = '';
 			var con_saver = '';
@@ -208,6 +220,52 @@ echo $jsword;
 				$('#timetable').html(con_saver);
 				$('#routecode').html(RouteName);
 				ssdp.renew_new();
+			});
+			},
+			initial2:function(){//bus schedule
+			//ajax once data 
+			var Now =  new Date();
+			var WeekDayArray = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+			var RouteID = '';
+			var con_saver = '今日末班車已過';
+			var PreArrivalTime = 86400;
+			$.getJSON( "crawler/motc_bus_dynamic.php?route="+_route+"&direct="+_direct+"&citycode="+_citycode+"&func=-1", function( data ) {
+			//console.log(JSON.stringify(data));
+			console.log('initial2');
+			console.log(data);
+			for(rkey in data){
+				RouteID = data[rkey]['RouteID'];//feels like it's canbe use in 備份的資料連結(同公總代碼？待驗證)
+				for(key in data[rkey]['Timetables']){
+					//con_saver += 'weekday(1/0):'+data[rkey]['Timetables'][key]['ServiceDay'][WeekDayArray[Now.getDay()]];
+					if(data[rkey]['Timetables'][key]['ServiceDay'][WeekDayArray[Now.getDay()]] == 1){//表示有營運
+						
+						var ArrivalTime = data[rkey]['Timetables'][key]['StopTimes'][0]['ArrivalTime'];
+						ArrivalTime = ArrivalTime.split(":")[0]*3600+ArrivalTime.split(":")[1]*60;
+						ArrivalTime -= Now.getSeconds()*1+Now.getMinutes()*60+Now.getHours()*3600;
+						
+						//con_saver = Now.getSeconds()*1+Now.getMinutes()*60+Now.getHours()*3600
+						if(ArrivalTime > PreArrivalTime && ArrivalTime>=0 ){//極限是23:59 86399，因此第一個PreArrivalTime一定最大，快到班條件即是：最小值且不小於零
+							PreArrivalTime = ArrivalTime;
+							con_saver = '下班發車：'+ArrivalTime;
+						}
+						
+					}
+					
+					//console.log(StopName+':'+StopUID);
+					console.log(con_saver+':'+PreArrivalTime);
+					
+					}
+					if(PreArrivalTime = 86400){
+						$('#nextbus').html(con_saver);
+					}
+				}
+			})
+			.done(function(){
+				console.log((location.pathname.substring(location.pathname.lastIndexOf('/')+1))+': ajax initial2 complete!');
+				//$("#loading_mask").stop().fadeOut();
+				//$('#timetable').html(con_saver);
+				//$('#routecode').html(RouteName);
+				//ssdp.renew_new();
 			});
 		},
 		touch:function(){//ajax 試探值的變化
@@ -450,6 +508,7 @@ echo $jsword;
 	////
 	  $(function(){
 		 ssdp.initial();
+		 ssdp.initial2();
 		 //setInterval(function(){ ssdp.touch(); }, 3000);
 		$( "#tabs" ).tabs({
 			//disabled: [0,1]
