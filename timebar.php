@@ -10,7 +10,7 @@
 <script>
 var timer = 0,
     perc = 0,
-    timeTotal = 4500,
+    timeTotal = 500,
     timeCount = 1,
     cFlag;
 

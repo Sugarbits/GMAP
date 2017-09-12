@@ -120,7 +120,7 @@
 		btn_route_value = data_route_value;
 		btn_value = data_val;
 		//時刻表切換
-		var ttb_src = "../GMAP/show_stops_dynamic_part_ui.php?route="+btn_route_value+"&direct="+btn_direction_value+"&citycode=HualienCounty";
+		var ttb_src = "../GMAP/show_stops_dynamic_part_ui.php?route="+btn_route_value+"&direct="+btn_direction_value+"&citycode=HualienCounty&buspn="+btn_value;
 		console.log(ttb_src);
 		ttb_iframe.src = ttb_src;
 		//時刻表切換 END
@@ -361,7 +361,7 @@
 				parseFloat(pmarker.getPosition().lng()));
 		   // myLatLng = new google.maps.LatLng(lat, lon);
 			 map.panTo(point);
-			 map.setZoom(18);
+			 map.setZoom(22);
 		}
 		function panto_muti_marker(pmarkers){
 			if(pmarkers.length != 0){
@@ -469,7 +469,7 @@
 		}
 	    var myLatLng = {lat: 23.7, lng: 121.4};
         map = new google.maps.Map(document.getElementById('map'), {
-			zoom: 15,
+			zoom: 22,
 			center: myLatLng
         });
 		//
@@ -540,8 +540,8 @@
 		HTML_marker_initial();
 		footer_initail(car_no_filter);
 		ttb_iframe = document.getElementById('ttb');
-			renew();
-         setInterval("renew()",10000);//Here is my logic now
+		renew();
+        setInterval("renew()",10000);//Here is my logic now
 		});
 	});
 	

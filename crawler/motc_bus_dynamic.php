@@ -1,5 +1,12 @@
 <?php header("Content-Type:text/html; charset=UTF-8"); ?> 
 <?php
+header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
+header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
+header("Cache-Control: no-store, no-cache, must-revalidate");
+header("Cache-Control: post-check=0, pre-check=0", false);
+header("Pragma: no-cache");
+?>
+<?php
 	/*
 	if($_GET['touch']=='true'){
 		//$url = 'http://ptx.transportdata.tw/MOTC/v2/Bus/EstimatedTimeOfArrival/City/'.$_GET['citycode'].'/'.$_GET['route'].'?$filter=Direction%20eq%20%27'.$_GET['direct'].'%27&$orderby=StopSequence%20asc&$format=JSON';//動態的資料，待修改(要配合 get parameter)	
@@ -10,6 +17,7 @@
 	}
 	*/
 	@$func = $_GET['func'];
+	@$test = $_GET['test'];
 	if($func == '-1'){
 		$url = 'http://ptx.transportdata.tw/MOTC/v2/Bus/Schedule/City/'.$_GET['citycode'].'/'.$_GET['route'].'?$filter=Direction%20eq%20%27'.$_GET['direct'].'%27&$format=JSON';
 	}
@@ -28,6 +36,9 @@
 	else{
 		$url = 'http://ptx.transportdata.tw/MOTC/v2/Bus/EstimatedTimeOfArrival/City/'.$_GET['citycode'].'/'.$_GET['route'].'?$filter=Direction%20eq%20%27'.$_GET['direct'].'%27&$orderby=StopSequence%20asc&$format=JSON';//動態的資料，待修改(要配合 get parameter)	
 	}
+	if(isset($test)){
+		die($url);
+	}
 	//die($url);
 	//init curl
 	$ch = curl_init();
@@ -39,7 +50,13 @@
 	$dom = curl_exec($ch);
 	//close curl
 	curl_close($ch);
-	printf($dom);
+	/*
+	if( isset( json_encode($dom)['message'] ) ){
+		if(json_encode($dom)['message'] == '發生錯誤。'){
+				//todo
+		}
+	}
+	*/
 
  
 
@@ -47,5 +64,5 @@
 	if($encode!='UTF-8'){
 		$html = mb_convert_encoding($dom,$encode,"UTF-8");
 	}
-    
+    printf($dom);
 ?>

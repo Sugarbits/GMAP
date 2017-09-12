@@ -1,7 +1,8 @@
 <?php
 $jsword = "<script> var _route = '".$_GET['route']."';";
 $jsword .= "var _citycode = '".$_GET['citycode']."';";
-$jsword .= "var _direct = '".$_GET['direct']."';</script>";
+$jsword .= "var _direct = '".$_GET['direct']."';";
+$jsword .= "var _buspn = '".$_GET['buspn']."';</script>";
 echo $jsword;
 ?>
 <?php include('timebar.php'); ?>
@@ -11,6 +12,7 @@ echo $jsword;
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
 	<!--<link type="text/css" rel="Stylesheet" href="EX5.css" />-->
 	<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+	<link rel="stylesheet" href="scrollbar.css">
 	<script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.2.1.min.js"></script>
 	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 	<script src="clock.js"></script>
@@ -63,11 +65,16 @@ echo $jsword;
     width: 200px;
     height: 150px;
 	}
-
-.now_bus{
-	height:2em;
-	width:auto;
-}
+	.now_busicon{
+		height:2em;	
+		width:auto;
+	}
+	.now_buspn{
+		font-size:0.5em;	
+	}
+	.now_bus{
+		
+	}
 #timetable
 {
     position: relative;
@@ -118,6 +125,7 @@ echo $jsword;
   </head>
   <body>
   <h1 class='timetable_btn' id='routecode'></h1>
+  <span id='span_debug'></span>
   <h1 class='timetable_btn2' id='nextbus'></h1>
   <span id='open_self' class="ui-icon ui-icon-document-b"></span>
 
@@ -125,7 +133,11 @@ echo $jsword;
 <div id='loading_mask'>
   <h1 style='color:white'>Loading ...</h1>
   </div>
-  <div id='main'></div>
+
+		<div id='main'></div>
+	
+   
+  
   <BR>
   <!---->
  <!-- <div id="tabs">
@@ -139,10 +151,14 @@ echo $jsword;
   <div id="tabs-2">
     <p></p>
   </div>-->
-  <?php 
-  $content = '<div id="timetable">';
-  $content .= '</div>';
-  echo $content;
+       
+<div class="scrollbar" id="style-3">
+	<div class="force-overflow">
+  <div id="timetable">
+  </div>
+</div></div>
+  <?php
+  //echo $content;
   ?>
   </div>
   <!---->
@@ -154,6 +170,14 @@ echo $jsword;
    <script>
    var ssdp={
 	   organ_stops:[],
+	   div_id_move_pre:false,//for scroll_delta:[],
+	   pn_filter:function(pn,data_pn){
+		   
+			if(pn != data_pn){
+				return false;
+			}
+			return true;
+	   },
 	   wrap_div:function(str,id = false,_class = 'rcorners1'){
 		   if(id!=false){
 		   return "<div id='"+id+"' class='"+_class+"'>"+str+"</div>";
@@ -189,14 +213,27 @@ echo $jsword;
 			}
 		
 		},
+		MOTC_JSON_DEBUG:function(jsonstr){
+			if('message' in jsonstr){
+				if(jsonstr['message'] == '發生錯誤。'){
+					alert('發生錯誤。');
+					return false;
+				}
+				
+			}
+			return true;
+		},
 		initial:function(){//bus stops
 			//ajax once data
 			var RouteName = '';
 			var con_saver = '';
 			$.getJSON( "crawler/motc_bus_dynamic.php?route="+_route+"&direct="+_direct+"&citycode="+_citycode+"&func=0", function( data ) {
-			//console.log(JSON.stringify(data));
-			console.log('initial');
-			console.log(data);
+			//console.log("crawler/motc_bus_dynamic.php?route="+_route+"&direct="+_direct+"&citycode="+_citycode+"&func=0");
+			//console.log('initial');
+			if(!ssdp.MOTC_JSON_DEBUG(data)){
+				return 0;
+			}
+			//console.log(data);
 			for(rkey in data){
 				RouteName = data[rkey]['RouteName']['Zh_tw'];
 				for(key in data[rkey]['Stops']){
@@ -206,16 +243,19 @@ echo $jsword;
 					(ssdp.organ_stops).push(StopUID);
 					//
 					var left = ssdp.wrap_td(StopName,'60%');
-					var middle = ssdp.wrap_td(StopUID,'25%');
+					//var middle = ssdp.wrap_td(StopUID,'25%');
+					var middle = ssdp.wrap_td('&nbsp;','25%');
 					var right = ssdp.wrap_td('讀取中...&nbsp;','15%');
 					var id = StopUID;
-					console.log(StopName+':'+StopUID);
-					con_saver += ssdp.draw_div(left,middle,right,id);
+					//console.log(StopName+':'+StopUID);
+					con_saver += ssdp.draw_div(left,middle,right,id,'inactive rcorners1');
 					}
 				}
 			})
 			.done(function(){
-				console.log((location.pathname.substring(location.pathname.lastIndexOf('/')+1))+': ajax complete!');
+				//console.log((location.pathname.substring(location.pathname.lastIndexOf('/')+1))+': ajax complete!');
+				//console.log('ssdp.organ_stops:');
+				//console.log(ssdp.organ_stops);
 				$("#loading_mask").stop().fadeOut();
 				$('#timetable').html(con_saver);
 				$('#routecode').html(RouteName);
@@ -231,8 +271,11 @@ echo $jsword;
 			var PreArrivalTime = 86400;
 			$.getJSON( "crawler/motc_bus_dynamic.php?route="+_route+"&direct="+_direct+"&citycode="+_citycode+"&func=-1", function( data ) {
 			//console.log(JSON.stringify(data));
-			console.log('initial2');
-			console.log(data);
+			//console.log('initial2');
+			if(!ssdp.MOTC_JSON_DEBUG(data)){
+				return 0;
+			}
+			//console.log(data);
 			for(rkey in data){
 				RouteID = data[rkey]['RouteID'];//feels like it's canbe use in 備份的資料連結(同公總代碼？待驗證)
 				for(key in data[rkey]['Timetables']){
@@ -242,17 +285,17 @@ echo $jsword;
 						var ArrivalTime = data[rkey]['Timetables'][key]['StopTimes'][0]['ArrivalTime'];
 						ArrivalTime = ArrivalTime.split(":")[0]*3600+ArrivalTime.split(":")[1]*60;
 						ArrivalTime -= Now.getSeconds()*1+Now.getMinutes()*60+Now.getHours()*3600;
-						
+						//console.log(con_saver+':'+ArrivalTime);
 						//con_saver = Now.getSeconds()*1+Now.getMinutes()*60+Now.getHours()*3600
-						if(ArrivalTime > PreArrivalTime && ArrivalTime>=0 ){//極限是23:59 86399，因此第一個PreArrivalTime一定最大，快到班條件即是：最小值且不小於零
+						if(ArrivalTime < PreArrivalTime && ArrivalTime>=0 ){//極限是23:59 86399，因此第一個PreArrivalTime一定最大，快到班條件即是：最小值且不小於零
 							PreArrivalTime = ArrivalTime;
-							con_saver = '下班發車：'+ArrivalTime;
+							con_saver = '下班發車：'+data[rkey]['Timetables'][key]['StopTimes'][0]['ArrivalTime'];
 						}
 						
 					}
 					
 					//console.log(StopName+':'+StopUID);
-					console.log(con_saver+':'+PreArrivalTime);
+					//console.log(con_saver+':'+PreArrivalTime);
 					
 					}
 					if(PreArrivalTime = 86400){
@@ -261,14 +304,14 @@ echo $jsword;
 				}
 			})
 			.done(function(){
-				console.log((location.pathname.substring(location.pathname.lastIndexOf('/')+1))+': ajax initial2 complete!');
+				//console.log((location.pathname.substring(location.pathname.lastIndexOf('/')+1))+': ajax initial2 complete!');
 				//$("#loading_mask").stop().fadeOut();
 				//$('#timetable').html(con_saver);
 				//$('#routecode').html(RouteName);
 				//ssdp.renew_new();
 			});
 		},
-		touch:function(){//ajax 試探值的變化
+		/*touch:function(){//ajax 試探值的變化
 		$.getJSON( "crawler/motc_bus_dynamic.php?route="+_route+"&direct="+_direct+"&citycode="+_citycode+"&func=1", function( data ) {
 			console.log("crawler/motc_bus_dynamic.php?route="+_route+"&direct="+_direct+"&citycode="+_citycode+"&func=1");
 			console.log(data);
@@ -292,8 +335,8 @@ echo $jsword;
 				;
 			}
 			});
-		},
-		renew:function(){//ajax抓值
+		},*/
+		/*renew:function(){//ajax抓值
 			console.log('renew()');
 			var cnt = 0;
 			var cnt_total = 0;
@@ -303,6 +346,9 @@ echo $jsword;
 			var con_saver = '';//total
 			var has_car = false;//for scroll
 			$.getJSON( "crawler/motc_bus_dynamic.php?route="+_route+"&direct="+_direct+"&citycode="+_citycode+"", function( data ) {
+				if(!ssdp.MOTC_JSON_DEBUG(data)){
+					return 0;
+				}
 				//console.log(JSON.stringify(data));
 				cnt = 0;
 				var first_car = true;
@@ -354,26 +400,30 @@ echo $jsword;
 				console.log((location.pathname.substring(location.pathname.lastIndexOf('/')+1))+': ajax complete!');
 				//$("#loading_mask").stop().fadeOut();
 				<?php echo 'animateUpdate();';?>
-				/*if(has_car)
-				ssdp.scroll_to('#now_stop');*/
+				if(has_car)
+				ssdp.scroll_to('#now_stop');
 			});
 			<?php 
 			echo 'clearbar();';
 			echo 'animateUpdate();';
 			?>
 			return true;	
-	},//ssdp.renew() end
+	},*///ssdp.renew() end
 	renew_new:function(){//ajax抓值
 			console.log('renew_new()');
 			var key_cnt = 0;
-			var con_stopname = '';//stop name
+			/*var con_stopname = '';//stop name
 			var con_busplate = '';//stop bus num
 			var con_estimatetime = '';//stop bus predict time
-			var con_saver = '';//total
-			var has_car = false;//for scroll
+			var con_saver = '';//total*/
+			var div_id_move = false;//for scroll
+			var _icon = "<img class='now_busicon' src='pic/ex_bus.png' />";
 			$.getJSON( "crawler/motc_bus_dynamic.php?route="+_route+"&direct="+_direct+"&citycode="+_citycode+"", function( data ) {
 				//console.log("motc_bus_dynamic.php?route="+_route+"&direct="+_direct+"&citycode="+_citycode+"");
-				console.log(data);
+				if(!ssdp.MOTC_JSON_DEBUG(data)){
+					return 0;
+				}
+				//console.log(data);
 				if(data==''){
 					//alert('empty');
 					for(pnkey in ssdp.organ_stops){
@@ -381,15 +431,13 @@ echo $jsword;
 					}
 				}else{
 				cnt = 0;
-				var con_obj={};
+				var con_obj={'EstimateTime':[],'StopUID':[],'IsLastBus':[]};
 				var first_car = true;
 				var RouteName = '';
 				var UpdateTime = '';
-				var _icon = "<img class='now_bus' src='pic/ex_bus.png' />";
 				//var PreStopName = '';//存取前一個站名
 				//var PreEstimateTime = -999;//存取前一個到站時間預估
 				for(key in data){
-					key_cnt++;
 					var StopUID = data[key]['StopUID'];
 					var PlateNumb = data[key]['PlateNumb'];
 					var IsLastBus = false;
@@ -401,25 +449,55 @@ echo $jsword;
 						con_obj[StopUID] = [PlateNumb];	
 					}
 					*/
-					/*
-					if(PlateNumb in con_obj){
-						(con_obj[PlateNumb]).push(StopUID);
-					}else{
-						con_obj[PlateNumb] = [StopUID];	
-					}
-					*/
-					//END
 					//預估到站時間，沒有就賦予-1 並且判斷是否為末班車
-					/*if('EstimateTime' in data[key]){
+					if('EstimateTime' in data[key]){
 						var EstimateTime = data[key]['EstimateTime'];
 					}else{
 						var IsLastBus = data[key]['IsLastBus'];
 						var EstimateTime = -1;
-					}*/
+					}
+					if( _buspn != ''){//公車指定不為空
+						if(!ssdp.pn_filter(_buspn,PlateNumb)){//車號不正確時...
+							PlateNumb = -1;
+							EstimateTime = -1;
+						}
+					}
+					/*if(div_id_move == false){//還未有車
+							if(PlateNumb != -1){//老司機在這兒
+							if(div_id_move_pre == false){
+								div_id_move_pre = div_id_move;
+							}
+								div_id_move = StopUID;
+							}
+							
+						}*/
+						if(div_id_move == false){//還未有車
+							if(PlateNumb != -1){//老司機在這兒
+								//console.log('mmmmmm');
+								//console.log(StopUID);
+								div_id_move = StopUID;						
+							}
+							
+						}
+						//div_id_move_pre = div_id_move;
+						//div_id_move = StopUID;
+					if(PlateNumb in con_obj['StopUID']){
+						(con_obj['StopUID'][PlateNumb]).push(StopUID);
+						(con_obj['EstimateTime'][PlateNumb]).push(EstimateTime);
+						(con_obj['IsLastBus'][PlateNumb]).push(IsLastBus);
+					}else{
+						con_obj['StopUID'][PlateNumb] = [StopUID];	
+						con_obj['EstimateTime'][PlateNumb] = [EstimateTime];	
+						con_obj['IsLastBus'][PlateNumb] = [IsLastBus];	
+					}
+					
+					//END
+
 					
 
 					var StopName = data[key]['StopName']['Zh_tw'];
-					console.log(key_cnt+'.'+StopName+':'+StopUID);
+					//console.log(key_cnt+'.'+StopName+':'+StopUID);
+					
 					/*
 					var div_id = false;
 					
@@ -457,40 +535,67 @@ echo $jsword;
 					con_estimatetime = ssdp.wrap_td(ssdp.word_trans_time(EstimateTime,IsLastBus),'25%');	
 					con_saver += ssdp.wrap_div(ssdp.wrap_tb(ssdp.wrap_tr(con_stopname+con_busplate+con_estimatetime)),div_id);
 					*/
-					//Notice 這是全部讀完一次更新喔！
-					for(pnkey in con_obj){//pn= plate number
-						if(pnkey==-1){
-							ssdp.fix_div(con_obj[pnkey],3,ssdp.word_trans_time(EstimateTime,IsLastBus));
-						}else{
-							ssdp.fix_div(con_obj[pnkey],2,_icon+pnkey);
-							ssdp.fix_div(con_obj[pnkey],3,ssdp.word_trans_time(EstimateTime,IsLastBus));
+					
+				}
+				//Notice 這是全部讀完一次更新喔！
+					//console.log(con_obj);
+					console.log('全部讀完一次更新喔');
+					for(pnkey in con_obj['StopUID']){//pn= plate number
+						for(pnkey2 in con_obj['StopUID'][pnkey]){
+							//console.log(pnkey+':'+con_obj['StopUID'][pnkey][pnkey2]+'/'+EstimateTime);
+							if(pnkey==-1){
+								ssdp.fix_div(con_obj['StopUID'][pnkey][pnkey2],3,ssdp.word_trans_time(con_obj['EstimateTime'][pnkey][pnkey2],con_obj['IsLastBus'][pnkey][pnkey2]));
+								ssdp.fix_div(con_obj['StopUID'][pnkey][pnkey2],2,"&nbsp;");
+							}else{
+								//console.log(div_id_move+':'+con_obj['StopUID'][pnkey][pnkey2]);
+								if(div_id_move == con_obj['StopUID'][pnkey][pnkey2]){//是現在這個車！
+									ssdp.fix_div(con_obj['StopUID'][pnkey][pnkey2],2,_icon+"<br><span class=now_buspn>"+pnkey+"</span>");
+								}else if( _buspn == ''){
+									ssdp.fix_div(con_obj['StopUID'][pnkey][pnkey2],2,_icon+"<br><span class=now_buspn>"+pnkey+"</span>");
+								}else{
+									ssdp.fix_div(con_obj['StopUID'][pnkey][pnkey2],2,"&nbsp;");
+								}
+								ssdp.fix_div(con_obj['StopUID'][pnkey][pnkey2],3,ssdp.word_trans_time(con_obj['EstimateTime'][pnkey][pnkey2],con_obj['IsLastBus'][pnkey][pnkey2]));
+							}
 						}
 						
 					}
-				}
+				
 			}	
 					
 							
 				//$('#timetable').html(con_saver);
-				console.log(con_obj);
+				//console.log(con_obj);
 			})
 			.done(function(){
-				console.log((location.pathname.substring(location.pathname.lastIndexOf('/')+1))+': ajax complete!');
+				//console.log((location.pathname.substring(location.pathname.lastIndexOf('/')+1))+': ajax complete!');
 				//$("#loading_mask").stop().fadeOut();
 				<?php 
 				echo 'clearbar();';
 				echo 'animateUpdate();';
 				?>
-				/*if(has_car)
-				ssdp.scroll_to('#now_stop');*/
+				//console.log('[scroll]'+div_id_move+','+ssdp.div_id_move_pre);
+				if(div_id_move != ssdp.div_id_move_pre){
+					ssdp.div_id_move_pre = div_id_move;	
+					ssdp.scroll_to(div_id_move);	
+				}
 			});
 
 			return true;	
 	},//ssdp.renew() end
 	scroll_to:function(scrollTo){//'#now_stop'
         if (scrollTo != null && scrollTo != '') {
-            $('html, body').animate({
-                scrollTop: $(scrollTo).offset().top
+            //$('html, body').animate({
+				console.log('toptoptoptoptoptop');
+				var top  = $('#style-3').offset().top;
+				console.log(top);
+				top  = $('#'+scrollTo).offset().top-top;
+				console.log(top);
+				//$('#'+scrollTo).offset().top;
+				//$('#'+'open_self').offset().top;
+            $('html, #style-3').animate({
+                scrollTop: top
+               // scrollTop: $('#'+'open_self').offset().top
             }, 1500);
         }
 	},
